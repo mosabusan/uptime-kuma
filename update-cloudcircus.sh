@@ -2,8 +2,9 @@
 # Similar to `extra/download-dist.js`
 # but this script is for cloudcircus
 
-"echo" "-e" "====================="
-"echo" "-e" "Update git repository"
+echo "====================="
+echo "Update git repository"
+echo ""
 git fetch --all
 git checkout cloudcircus
 
@@ -16,8 +17,9 @@ ZIP_FILE=dist.tar.gz
 
 
 echo ""
-"echo" "-e" "====================="
-"echo" "-e" "Download release dist from github \n"
+echo "====================="
+echo "Download release dist from github"
+echo ""
 # backup dist
 if [ -d $DIST_DIR ]; then
     if [ -d $BACKUP_DIR ]; then
@@ -33,8 +35,9 @@ curl -OL https://github.com/startialab-inc/uptime-kuma/releases/download/$VERSIO
 
 
 echo ""
-"echo" "-e" "====================="
-"echo" "-e" "Unzip release dist \n"
+echo "====================="
+echo "Unzip release dist"
+echo ""
 tar -zxvf $ZIP_FILE
 
 if [ $? -ne 0 ]; then
@@ -52,5 +55,7 @@ else
     rm -rf $BACKUP_DIR
 fi
 
+# remove zip file
 rm -rf $ZIP_FILE
+
 exit 0
