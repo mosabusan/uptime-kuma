@@ -66,6 +66,7 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
     try {
         let heartbeatList = {};
         let uptimeList = {};
+        let heartbeatPeriodList = {};
 
         let slug = request.params.slug;
         let statusPageID = await StatusPage.slugToID(slug);
@@ -94,11 +95,40 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
 
             const type = 24;
             uptimeList[`${monitorID}_${type}`] = await Monitor.calcUptime(type, monitorID);
+
+            // Calculate heartbeat status for each 5 minutes
+            let period = await R.getAll(`
+                SELECT
+                    datetime((strftime('%s', time) / ?) * ?, 'unixepoch') AS time_interval,
+                    CASE
+                        -- Priority: Down(0) > Maintenance(3) > Pending(2) > Up(1)
+                        WHEN MIN(status) = 0 THEN 0
+                        ELSE MAX(status)
+                    END as show_status
+                FROM heartbeat
+                WHERE monitor_id = ?
+                GROUP BY time_interval
+                ORDER BY time_interval DESC
+                LIMIT 150
+            `, [
+                300, 300,  // 5 minutes
+                monitorID,
+            ]);
+
+            period = R.convertToBeans("heartbeat", period);
+            heartbeatPeriodList[monitorID] = period.reverse().map(row => {
+                return {
+                    status: row.show_status,
+                    time: row.time_interval,
+                    msg: ""
+                };
+            });
         }
 
         response.json({
             heartbeatList,
-            uptimeList
+            uptimeList,
+            heartbeatPeriodList,
         });
 
     } catch (error) {
