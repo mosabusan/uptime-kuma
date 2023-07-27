@@ -12,6 +12,7 @@ echo "Update git repository"
 echo ""
 git fetch --all
 git checkout cloudcircus
+git pull origin cloudcircus
 
 
 DIST_DIR=dist
