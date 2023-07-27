@@ -1,6 +1,11 @@
-# Description: Update cloudcircus dist from github release
+# Description: Update cloudcircus dist from github pull request
 # Similar to `extra/download-dist.js`
 # but this script is for cloudcircus
+
+if [ -z $1 ]; then
+    echo "Error: Need download url as argument"
+    exit 1
+fi
 
 echo "====================="
 echo "Update git repository"
@@ -8,8 +13,6 @@ echo ""
 git fetch --all
 git checkout cloudcircus
 
-# change version if necessary
-VERSION=v0.1.0-cloudcircus
 
 DIST_DIR=dist
 BACKUP_DIR=dist-backup
@@ -30,8 +33,17 @@ if [ -d $DIST_DIR ]; then
     mv $DIST_DIR $BACKUP_DIR
 fi
 
-# download release dist as zip from github
-curl -OL https://github.com/startialab-inc/uptime-kuma/releases/download/$VERSION/$ZIP_FILE
+# download dist zip from github
+curl -OL $1
+
+if [ $? -ne 0 ]; then
+    # if error
+    echo ""
+    echo "Error: Failed to download dist"
+    # rollback
+    mv $BACKUP_DIR $DIST_DIR
+    exit 1
+fi
 
 
 echo ""
@@ -43,7 +55,7 @@ tar -zxvf $ZIP_FILE
 if [ $? -ne 0 ]; then
     # if error
     echo ""
-    echo "Error: Failed to download release dist from github"
+    echo "Error: Failed to unzip downloaded dist"
     # rollback
     mv $BACKUP_DIR $DIST_DIR
     exit 1
