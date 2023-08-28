@@ -1,6 +1,8 @@
 # Description: Update cloudcircus dist from github pull request
 # Similar to `extra/download-dist.js`
 # but this script is for cloudcircus
+#
+# Usage: sh update-cloudcircus.sh <download url>
 
 if [ -z $1 ]; then
     echo "Error: Need download url as argument"
