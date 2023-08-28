@@ -17,6 +17,13 @@ git checkout cloudcircus
 git pull origin cloudcircus
 
 
+echo ""
+echo "====================="
+echo "Install dependencies"
+echo ""
+npm install --production
+
+
 DIST_DIR=dist
 BACKUP_DIR=dist-backup
 ZIP_FILE=dist.tar.gz
