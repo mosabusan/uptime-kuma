@@ -19,6 +19,7 @@ import DockerHosts from "./components/settings/Docker.vue";
 import MaintenanceDetails from "./pages/MaintenanceDetails.vue";
 import ManageMaintenance from "./pages/ManageMaintenance.vue";
 import APIKeys from "./components/settings/APIKeys.vue";
+import SetupDatabase from "./pages/SetupDatabase.vue";
 
 // Settings - Sub Pages
 import Appearance from "./components/settings/Appearance.vue";
@@ -30,7 +31,6 @@ import usersSettingsRoutes from "./components/settings/Users/routes.js";
 import MonitorHistory from "./components/settings/MonitorHistory.vue";
 const Security = () => import("./components/settings/Security.vue");
 import Proxies from "./components/settings/Proxies.vue";
-import Backup from "./components/settings/Backup.vue";
 import About from "./components/settings/About.vue";
 
 const routes = [
@@ -128,10 +128,6 @@ const routes = [
                                 component: Proxies,
                             },
                             {
-                                path: "backup",
-                                component: Backup,
-                            },
-                            {
                                 path: "about",
                                 component: About,
                             },
@@ -168,6 +164,10 @@ const routes = [
     {
         path: "/setup",
         component: Setup,
+    },
+    {
+        path: "/setup-database",
+        component: SetupDatabase,
     },
     {
         path: "/status-page",

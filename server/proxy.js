@@ -11,11 +11,10 @@ class Proxy {
 
     /**
      * Saves and updates given proxy entity
-     *
-     * @param proxy
-     * @param proxyID
-     * @param userID
-     * @return {Promise<Bean>}
+     * @param {object} proxy Proxy to store
+     * @param {number} proxyID ID of proxy to update
+     * @param {number} userID ID of user the proxy belongs to
+     * @returns {Promise<Bean>} Updated proxy
      */
     static async save(proxy, proxyID, userID) {
         let bean;
@@ -85,10 +84,10 @@ class Proxy {
 
     /**
      * Create HTTP and HTTPS agents related with given proxy bean object
-     *
-     * @param proxy proxy bean object
-     * @param options http and https agent options
-     * @return {{httpAgent: Agent, httpsAgent: Agent}}
+     * @param {object} proxy proxy bean object
+     * @param {object} options http and https agent options
+     * @returns {{httpAgent: Agent, httpsAgent: Agent}} New HTTP and HTTPS agents
+     * @throws Proxy protocol is unsupported
      */
     static createAgents(proxy, options) {
         const { httpAgentOptions, httpsAgentOptions } = options || {};

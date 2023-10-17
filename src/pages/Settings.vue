@@ -139,9 +139,6 @@ export default {
                 proxies: {
                     title: this.$t("Proxies"),
                 },
-                backup: {
-                    title: this.$t("Backup"),
-                },
                 about: {
                     title: this.$t("About"),
                 },
@@ -202,6 +199,7 @@ export default {
         /**
          * Load the general settings page
          * For desktop only, on mobile do nothing
+         * @returns {void}
          */
         loadGeneralPage() {
             if (!this.currentPage && !this.$root.isMobile) {
@@ -209,7 +207,10 @@ export default {
             }
         },
 
-        /** Load settings from server */
+        /**
+         * Load settings from server
+         * @returns {void}
+         */
         loadSettings() {
             this.$root.getSocket().emit("getSettings", (res) => {
                 this.settings = res.data;
@@ -253,13 +254,15 @@ export default {
         /**
          * Callback for saving settings
          * @callback saveSettingsCB
-         * @param {Object} res Result of operation
+         * @param {object} res Result of operation
+         * @returns {void}
          */
 
         /**
          * Save Settings
-         * @param {saveSettingsCB} [callback]
-         * @param {string} [currentPassword] Only need for disableAuth to true
+         * @param {saveSettingsCB} callback Callback for socket response
+         * @param {string} currentPassword Only need for disableAuth to true
+         * @returns {void}
          */
         saveSettings(callback, currentPassword) {
             let valid = this.validateSettings();
@@ -279,7 +282,7 @@ export default {
 
         /**
          * Ensure settings are valid
-         * @returns {Object} Contains success state and error msg
+         * @returns {object} Contains success state and error msg
          */
         validateSettings() {
             if (this.settings.keepDataPeriodDays < 0) {
