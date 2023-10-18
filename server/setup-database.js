@@ -75,6 +75,7 @@ class SetupDatabase {
             dbConfig.hostname = process.env.UPTIME_KUMA_DB_HOSTNAME;
             dbConfig.port = process.env.UPTIME_KUMA_DB_PORT;
             dbConfig.database = process.env.UPTIME_KUMA_DB_NAME;
+            dbConfig.dbName = process.env.UPTIME_KUMA_DB_NAME;
             dbConfig.username = process.env.UPTIME_KUMA_DB_USERNAME;
             dbConfig.password = process.env.UPTIME_KUMA_DB_PASSWORD;
             Database.writeDBConfig(dbConfig);

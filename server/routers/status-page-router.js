@@ -95,6 +95,35 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
 
             const uptimeCalculator = await UptimeCalculator.getUptimeCalculator(monitorID);
             uptimeList[`${monitorID}_24`] = uptimeCalculator.get24Hour().uptime;
+
+            // Calculate heartbeat status for each 5 minutes
+            // sqlite: datetime((strftime('%s', time) / ?) * ?, 'unixepoch') AS time_interval,
+            let period = await R.getAll(`
+                SELECT
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(time) DIV ? * ?) AS time_interval,
+                    CASE
+                        -- Priority: Down(0) > Maintenance(3) > Pending(2) > Up(1)
+                        WHEN MIN(status) = 0 THEN 0
+                        ELSE MAX(status)
+                    END as show_status
+                FROM heartbeat
+                WHERE monitor_id = ?
+                GROUP BY time_interval
+                ORDER BY time_interval DESC
+                LIMIT 150
+            `, [
+                300, 300,  // 5 minutes
+                monitorID,
+            ]);
+
+            period = R.convertToBeans("heartbeat", period);
+            heartbeatPeriodList[monitorID] = period.reverse().map(row => {
+                return {
+                    status: row.show_status,
+                    time: row.time_interval,
+                    msg: ""
+                };
+            });
         }
 
         response.json({
