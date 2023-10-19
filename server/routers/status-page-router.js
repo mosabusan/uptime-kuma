@@ -116,9 +116,10 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
                 monitorID,
             ]);
 
-            period = R.convertToBeans("heartbeat", period);
+            // period = R.convertToBeans("heartbeat", period);
             heartbeatPeriodList[monitorID] = period.reverse().map(row => {
                 return {
+                    monitor_id: monitorID,
                     status: row.show_status,
                     time: row.time_interval,
                     msg: ""
