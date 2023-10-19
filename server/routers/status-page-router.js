@@ -4,9 +4,9 @@ const { UptimeKumaServer } = require("../uptime-kuma-server");
 const StatusPage = require("../model/status_page");
 const { allowDevAllOrigin, sendHttpError } = require("../util-server");
 const { R } = require("redbean-node");
-const Monitor = require("../model/monitor");
 const { badgeConstants } = require("../config");
 const { makeBadge } = require("badge-maker");
+const { UptimeCalculator } = require("../uptime-calculator");
 
 let router = express.Router();
 
@@ -93,13 +93,14 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
             list = R.convertToBeans("heartbeat", list);
             heartbeatList[monitorID] = list.reverse().map(row => row.toPublicJSON());
 
-            const type = 24;
-            uptimeList[`${monitorID}_${type}`] = await Monitor.calcUptime(type, monitorID);
+            const uptimeCalculator = await UptimeCalculator.getUptimeCalculator(monitorID);
+            uptimeList[`${monitorID}_24`] = uptimeCalculator.get24Hour().uptime;
 
             // Calculate heartbeat status for each 5 minutes
+            // sqlite: datetime((strftime('%s', time) / ?) * ?, 'unixepoch') AS time_interval,
             let period = await R.getAll(`
                 SELECT
-                    datetime((strftime('%s', time) / ?) * ?, 'unixepoch') AS time_interval,
+                    FROM_UNIXTIME(UNIX_TIMESTAMP(time) DIV ? * ?) AS time_interval,
                     CASE
                         -- Priority: Down(0) > Maintenance(3) > Pending(2) > Up(1)
                         WHEN MIN(status) = 0 THEN 0
@@ -115,9 +116,10 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
                 monitorID,
             ]);
 
-            period = R.convertToBeans("heartbeat", period);
+            // period = R.convertToBeans("heartbeat", period);
             heartbeatPeriodList[monitorID] = period.reverse().map(row => {
                 return {
+                    monitor_id: monitorID,
                     status: row.show_status,
                     time: row.time_interval,
                     msg: ""
