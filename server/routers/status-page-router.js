@@ -108,6 +108,7 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
                     END as show_status
                 FROM heartbeat
                 WHERE monitor_id = ?
+                    AND \`time\` >= NOW() - INTERVAL 1 DAY
                 GROUP BY time_interval
                 ORDER BY time_interval DESC
                 LIMIT 150
