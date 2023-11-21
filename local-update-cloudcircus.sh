@@ -32,7 +32,7 @@ ZIP_FILE=startialab-uptimekuma-cloudcircus.dist.tar.gz   #dist.tar.gz
 
 echo ""
 echo "====================="
-echo "Download release dist from github"
+echo "Manage backup release dist"
 echo ""
 # backup dist
 if [ -d $DIST_DIR ]; then
@@ -47,19 +47,19 @@ fi
 ## download dist zip from github
 #curl -OL $1
 
-if [ $? -ne 0 ]; then
-    # if error
-    echo ""
-    echo "Error: Failed to download dist"
-    # rollback
-    mv $BACKUP_DIR $DIST_DIR
-    exit 1
-fi
+#if [ $? -ne 0 ]; then
+#    # if error
+#    echo ""
+#    echo "Error: Failed to download dist"
+#    # rollback
+#    mv $BACKUP_DIR $DIST_DIR
+#    exit 1
+#fi
 
 
 echo ""
 echo "====================="
-echo "Unzip release dist"
+echo "Unzip release dist 'startialab-uptimekuma-cloudcircus.dist.tar.gz'"
 echo ""
 tar -zxvf $ZIP_FILE
 
